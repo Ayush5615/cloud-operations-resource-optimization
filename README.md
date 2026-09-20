@@ -22,39 +22,21 @@ The current implementation focuses on AWS EC2 resources.
 
 
 
-```text
+1\. AWS EC2
 
-AWS EC2
+2\. Resource Discovery
 
-|
+3\. CPU Utilization Monitoring
 
-Resource Discovery
+4\. Cost Anomaly Detection
 
-|
+5\. Optimization Analysis
 
-CPU Utilization Monitoring
+6\. Recommendation
 
-|
+7\. Human Approval
 
-Cost Anomaly Detection
+8\. AWS Remediation
 
-|
-
-Optimization Analysis
-
-|
-
-Recommendation
-
-|
-
-Human Approval
-
-|
-
-AWS Remediation
-
-|
-
-Audit Log
+9\. Audit Log
 
