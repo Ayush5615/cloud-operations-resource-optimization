@@ -536,9 +536,8 @@ def reject_recommendation(
     recommendation_id: int
 ):
 
-    recommendation = update_recommendation_status(
-        recommendation_id,
-        "REJECTED"
+    recommendation = get_recommendation(
+        recommendation_id
     )
 
     if recommendation is None:
@@ -548,15 +547,46 @@ def reject_recommendation(
             detail="Recommendation not found"
         )
 
+    if recommendation.status != "PENDING_APPROVAL":
+
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Recommendation cannot be rejected "
+                f"from status {recommendation.status}"
+            )
+        )
+
+    before_state = recommendation.status
+
+    updated = update_recommendation_status(
+        recommendation_id,
+        "REJECTED"
+    )
+
+    # Save audit log
+    audit = save_audit_log(
+        action="REJECT",
+        resource_id=recommendation.resource_id,
+        recommendation_id=recommendation.id,
+        approved_by="admin",
+        before_state=before_state,
+        after_state="REJECTED"
+    )
+
     return {
 
         "message": (
             "Recommendation rejected"
         ),
 
-        "id": recommendation.id,
+        "id": updated.id,
 
-        "status": recommendation.status
+        "status": updated.status,
+
+        "audit_logged": True,
+
+        "audit_log_id": audit.id
     }
 
 
