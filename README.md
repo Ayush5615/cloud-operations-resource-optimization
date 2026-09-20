@@ -96,7 +96,9 @@ The goal is not to automate every decision blindly. The platform keeps a human a
 
 ```text
 
-&#x20;                  AWS EC2
+AWS EC2
+
+
 
 &#x20;  |
 
