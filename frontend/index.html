@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cloud Operations & Resource Optimization</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+            min-height: 100vh;
+        }
+
+        /* ================================
+           HEADER
+        ================================= */
+
+        .topbar {
+            background: #111827;
+            color: white;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand-text h1 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 3px;
+        }
+
+        .connection {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #d1d5db;
+        }
+
+        .connection-dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
+        }
+
+        /* ================================
+           LAYOUT
+        ================================= */
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 72px);
+        }
+
+        .sidebar {
+            width: 225px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            padding: 25px 15px;
+            position: fixed;
+            left: 0;
+            top: 72px;
+            bottom: 0;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 12px;
+            border-radius: 9px;
+            color: #4b5563;
+            font-size: 13px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .nav-item.active {
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main {
+            margin-left: 225px;
+            width: calc(100% - 225px);
+            padding: 30px;
+        }
+
+        /* ================================
+           PAGE HEADER
+        ================================= */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .page-header h2 {
+            font-size: 25px;
+            color: #111827;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary {
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .secondary:hover {
+            background: #f9fafb;
+        }
+
+        .danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .success {
+            background: #16a34a;
+            color: white;
+        }
+
+        /* ================================
+           MESSAGE
+        ================================= */
+
+        .message {
+            display: none;
+            margin-bottom: 20px;
+            padding: 13px 16px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .message.success-message {
+            display: block;
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .message.error-message {
+            display: block;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* ================================
+           METRICS
+        ================================= */
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 17px;
+            margin-bottom: 25px;
+        }
+
+        .metric {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 13px;
+            padding: 19px;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+        }
+
+        .metric-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 13px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .metric-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .metric-value {
+            font-size: 25px;
+            font-weight: 750;
+            color: #111827;
+        }
+
+        .metric-sub {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 5px;
+        }
+
+        /* ================================
+           SECTION
+        ================================= */
+
+        .section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            margin-bottom: 22px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.035);
+        }
+
+        .section-header {
+            padding: 18px 21px;
+            border-bottom: 1px solid #eef0f3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h3 {
+            font-size: 15px;
+            color: #111827;
+        }
+
+        .section-title span {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        /* ================================
+           TABLE
+        ================================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #6b7280;
+            background: #f8fafc;
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #f0f2f5;
+            font-size: 12px;
+            color: #374151;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .resource-id {
+            font-family: Consolas, monospace;
+            font-size: 11px;
+            color: #2563eb;
+        }
+
+        /* ================================
+           BADGES
+        ================================= */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-gray {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        /* ================================
+           RECOMMENDATION CARD
+        ================================= */
+
+        .recommendation-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+            background: #ffffff;
+        }
+
+        .recommendation-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .recommendation-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 14px;
+        }
+
+        .recommendation-id {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .recommendation-resource {
+            font-family: Consolas, monospace;
+            color: #2563eb;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .recommendation-info {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 9px;
+        }
+
+        .recommendation-info small {
+            display: block;
+            color: #6b7280;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .recommendation-info strong {
+            font-size: 12px;
+            color: #111827;
+        }
+
+        .recommendation-reason {
+            background: #f8fafc;
+            border-radius: 9px;
+            padding: 13px;
+            margin-bottom: 14px;
+        }
+
+        .recommendation-reason strong {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .recommendation-reason p {
+            font-size: 12px;
+            color: #4b5563;
+            line-height: 1.55;
+        }
+
+        .recommendation-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 9px;
+        }
+
+        /* ================================
+           AUDIT
+        ================================= */
+
+        .audit-item {
+            display: flex;
+            gap: 14px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eef0f3;
+        }
+
+        .audit-item:last-child {
+            border-bottom: none;
+        }
+
+        .audit-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ecfdf5;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .audit-content {
+            flex: 1;
+        }
+
+        .audit-content strong {
+            font-size: 12px;
+            color: #111827;
+        }
+
+        .audit-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        /* ================================
+           EMPTY / LOADING
+        ================================= */
+
+        .empty {
+            padding: 35px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .loading {
+            padding: 25px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================================
+           FOOTER
+        ================================= */
+
+        .footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 10px;
+            padding: 10px 0 25px;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 1100px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .recommendation-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================================
+     TOP BAR
+========================================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            ☁
+        </div>
+
+        <div class="brand-text">
+            <h1>Cloud Operations Platform</h1>
+            <p>Resource Optimization & Cost Intelligence</p>
+        </div>
+
+    </div>
+
+    <div class="connection">
+        <span class="connection-dot"></span>
+        Backend Connected
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     LAYOUT
+========================================= -->
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            Operations
+        </div>
+
+        <div class="nav-item active" onclick="scrollToSection('overview')">
+            <span class="nav-icon">▦</span>
+            Dashboard
+        </div>
+
+        <div class="nav-item" onclick="scrollToSection('resources')">
+            <span class="nav-icon">☁</span>
+            EC2 Resources
+        </div>
+
+        <div class="nav-item" onclick="scrollToSection('recommendations')">
+            <span class="nav-icon">◈</span>
+            Recommendations
+        </div>
+
+        <div class="nav-item" onclick="scrollToSection('approval')">
+            <span class="nav-icon">✓</span>
+            Approval Center
+        </div>
+
+        <div class="nav-item" onclick="scrollToSection('audit')">
+            <span class="nav-icon">◷</span>
+            Audit Log
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- PAGE HEADER -->
+
+        <section id="overview">
+
+            <div class="page-header">
+
+                <div>
+                    <h2>Cloud Operations Dashboard</h2>
+
+                    <p>
+                        Monitor resources, detect cost anomalies,
+                        review recommendations and manage remediation.
+                    </p>
+                </div>
+
+                <div class="actions">
+
+                    <button
+                        class="primary"
+                        onclick="runScan()">
+                        ↻ Run Cloud Scan
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="loadDashboard()">
+                        ⟳ Refresh Dashboard
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="loadAuditLogs()">
+                        ◷ Refresh Audit Log
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+
+        <div id="message" class="message"></div>
+
+
+        <!-- =====================================
+             METRICS
+        ====================================== -->
+
+        <div class="metrics">
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span class="metric-label">
+                        EC2 Resources
+                    </span>
+
+                    <span class="metric-icon">
+                        ☁
+                    </span>
+                </div>
+
+                <div
+                    id="metricResources"
+                    class="metric-value">
+                    -
+                </div>
+
+                <div class="metric-sub">
+                    Total discovered resources
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span class="metric-label">
+                        Optimization Alerts
+                    </span>
+
+                    <span class="metric-icon">
+                        ⚡
+                    </span>
+                </div>
+
+                <div
+                    id="metricAlerts"
+                    class="metric-value">
+                    -
+                </div>
+
+                <div class="metric-sub">
+                    Cost anomalies detected
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span class="metric-label">
+                        Est. Monthly Savings
+                    </span>
+
+                    <span class="metric-icon">
+                        $
+                    </span>
+                </div>
+
+                <div
+                    id="metricSavings"
+                    class="metric-value">
+                    $0
+                </div>
+
+                <div class="metric-sub">
+                    From approved recommendations
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span class="metric-label">
+                        Pending Approval
+                    </span>
+
+                    <span class="metric-icon">
+                        !
+                    </span>
+                </div>
+
+                <div
+                    id="metricPending"
+                    class="metric-value">
+                    -
+                </div>
+
+                <div class="metric-sub">
+                    Recommendations awaiting review
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             EC2 RESOURCE INVENTORY
+        ====================================== -->
+
+        <section
+            id="resources"
+            class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span style="font-size:18px;">
+                        ☁
+                    </span>
+
+                    <div>
+                        <h3>
+                            EC2 Resource Inventory
+                        </h3>
+
+                        <span>
+                            Discovered cloud resources
+                        </span>
+                    </div>
+
+                </div>
+
+                <span
+                    id="resourceCount"
+                    class="badge badge-blue">
+                    0 Resources
+                </span>
+
+            </div>
+
+            <div
+                id="resourceTable"
+                class="section-body">
+
+                <div class="loading">
+                    Loading EC2 resources...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             OPTIMIZATION RECOMMENDATIONS
+        ====================================== -->
+
+        <section
+            id="recommendations"
+            class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span style="font-size:18px;">
+                        ⚡
+                    </span>
+
+                    <div>
+                        <h3>
+                            Optimization Recommendations
+                        </h3>
+
+                        <span>
+                            AI-assisted cloud cost optimization
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                id="optimizationContainer"
+                class="section-body">
+
+                <div class="loading">
+                    Loading optimization recommendations...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             APPROVAL CENTER
+        ====================================== -->
+
+        <section
+            id="approval"
+            class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span style="font-size:18px;">
+                        ✓
+                    </span>
+
+                    <div>
+                        <h3>
+                            Approval & Remediation Center
+                        </h3>
+
+                        <span>
+                            Human approval required before remediation
+                        </span>
+                    </div>
+
+                </div>
+
+                <span
+                    id="approvalCount"
+                    class="badge badge-yellow">
+                    0 Pending
+                </span>
+
+            </div>
+
+            <div
+                id="recommendationContainer"
+                class="section-body">
+
+                <div class="loading">
+                    Loading recommendations...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             AUDIT LOG
+        ====================================== -->
+
+        <section
+            id="audit"
+            class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span style="font-size:18px;">
+                        ◷
+                    </span>
+
+                    <div>
+                        <h3>
+                            Audit Log
+                        </h3>
+
+                        <span>
+                            Remediation and approval history
+                        </span>
+                    </div>
+
+                </div>
+
+                <button
+                    class="secondary"
+                    onclick="loadAuditLogs()">
+                    Refresh
+                </button>
+
+            </div>
+
+            <div
+                id="auditContainer"
+                class="section-body">
+
+                <div class="loading">
+                    Loading audit logs...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="footer">
+            Cloud Operations & Resource Optimization Platform
+            · Local Development Environment
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* =========================================
+       CONFIGURATION
+    ========================================= */
+
+    const API = "http://127.0.0.1:8000";
+
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    function showMessage(text, error = false) {
+
+        const box = document.getElementById("message");
+
+        box.textContent = text;
+
+        box.className = error
+            ? "message error-message"
+            : "message success-message";
+
+        setTimeout(() => {
+            box.className = "message";
+        }, 4000);
+    }
+
+
+    /* =========================================
+       NAVIGATION
+    ========================================= */
+
+    function scrollToSection(id) {
+
+        const element = document.getElementById(id);
+
+        if (element) {
+
+            element.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+
+
+    /* =========================================
+       BACKEND CHECK
+    ========================================= */
+
+    async function checkBackend() {
+
+        try {
+
+            const response =
+                await fetch(API + "/");
+
+            if (!response.ok) {
+                throw new Error("Backend unavailable");
+            }
+
+            return true;
+
+        } catch (error) {
+
+            showMessage(
+                "Backend unavailable. Make sure Uvicorn is running.",
+                true
+            );
+
+            return false;
+        }
+    }
+
+
+    /* =========================================
+       LOAD EC2 RESOURCES
+    ========================================= */
+
+    async function loadResources() {
+
+        const container =
+            document.getElementById("resourceTable");
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/api/resources/ec2"
+                );
+
+            if (!response.ok) {
+                throw new Error("Unable to load resources");
+            }
+
+            const data =
+                await response.json();
+
+            const resources =
+                data.resources || [];
+
+            document.getElementById(
+                "metricResources"
+            ).textContent = resources.length;
+
+            document.getElementById(
+                "resourceCount"
+            ).textContent =
+                resources.length + " Resources";
+
+
+            if (resources.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        No EC2 resources found.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            let html = `
+                <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Instance ID</th>
+                            <th>Type</th>
+                            <th>State</th>
+                            <th>CPU Utilization</th>
+                            <th>Region</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+            `;
+
+
+            resources.forEach(item => {
+
+                const state =
+                    item.state ||
+                    item.status ||
+                    "Running";
+
+                const cpu =
+                    item.cpu_utilization ??
+                    item.cpu ??
+                    "-";
+
+                const type =
+                    item.instance_type ||
+                    item.type ||
+                    "EC2";
+
+                const region =
+                    item.region ||
+                    "us-east-1";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            <span class="resource-id">
+                                ${item.instance_id || "-"}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${type}
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-green">
+                                ${state}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${cpu}${cpu !== "-" ? "%" : ""}
+                        </td>
+
+                        <td>
+                            ${region}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+            html += `
+                    </tbody>
+                </table>
+
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    Unable to load EC2 resources.
+                </div>
+            `;
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD OPTIMIZATION
+    ========================================= */
+
+    async function loadOptimization() {
+
+        const container =
+            document.getElementById(
+                "optimizationContainer"
+            );
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/api/optimization/ec2"
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load optimization data"
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const recommendations =
+                data.recommendations || [];
+
+
+            document.getElementById(
+                "metricAlerts"
+            ).textContent =
+                recommendations.length;
+
+
+            if (recommendations.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        No optimization recommendations found.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            let html = "";
+
+
+            recommendations.forEach((item, index) => {
+
+                const resource =
+                    item.resource_id ||
+                    item.instance_id ||
+                    "-";
+
+                const recommendation =
+                    item.recommendation ||
+                    item.reason ||
+                    "Optimization opportunity detected.";
+
+                const risk =
+                    item.risk ||
+                    "LOW";
+
+                const anomaly =
+                    item.anomaly_percentage ??
+                    item.increase_percentage ??
+                    "-";
+
+
+                let riskClass =
+                    "badge-green";
+
+                if (
+                    String(risk).toUpperCase() === "MEDIUM"
+                ) {
+                    riskClass = "badge-yellow";
+                }
+
+                if (
+                    String(risk).toUpperCase() === "HIGH"
+                ) {
+                    riskClass = "badge-red";
+                }
+
+
+                html += `
+
+                    <div class="recommendation-card">
+
+                        <div class="recommendation-top">
+
+                            <div>
+
+                                <div class="recommendation-id">
+                                    Optimization Alert #${index + 1}
+                                </div>
+
+                                <div class="recommendation-resource">
+                                    ${resource}
+                                </div>
+
+                            </div>
+
+                            <span class="badge ${riskClass}">
+                                ${risk} RISK
+                            </span>
+
+                        </div>
+
+
+                        <div class="recommendation-grid">
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Service
+                                </small>
+
+                                <strong>
+                                    EC2
+                                </strong>
+
+                            </div>
+
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Cost Increase
+                                </small>
+
+                                <strong>
+                                    ${anomaly}%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Recommendation
+                                </small>
+
+                                <strong>
+                                    ${recommendation}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    Unable to load optimization recommendations.
+                </div>
+            `;
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD RECOMMENDATIONS
+    ========================================= */
+
+    async function loadRecommendations() {
+
+        const container =
+            document.getElementById(
+                "recommendationContainer"
+            );
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/api/recommendations"
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load recommendations"
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const recommendations =
+                data.recommendations || [];
+
+
+            const pending =
+                recommendations.filter(
+                    item =>
+                        item.status ===
+                        "PENDING_APPROVAL"
+                );
+
+
+            document.getElementById(
+                "metricPending"
+            ).textContent =
+                pending.length;
+
+
+            document.getElementById(
+                "approvalCount"
+            ).textContent =
+                pending.length + " Pending";
+
+
+            if (recommendations.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        No recommendations available.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            let html = "";
+
+
+            recommendations.forEach(item => {
+
+                const status =
+                    item.status ||
+                    "UNKNOWN";
+
+                let statusClass =
+                    "badge-gray";
+
+                if (status === "PENDING_APPROVAL") {
+                    statusClass = "badge-yellow";
+                }
+
+                if (status === "APPROVED") {
+                    statusClass = "badge-green";
+                }
+
+                if (status === "REJECTED") {
+                    statusClass = "badge-red";
+                }
+
+
+                const saving =
+                    Number(
+                        item.estimated_monthly_saving || 0
+                    );
+
+
+                html += `
+
+                    <div class="recommendation-card">
+
+                        <div class="recommendation-top">
+
+                            <div>
+
+                                <div class="recommendation-id">
+                                    Recommendation #${item.id}
+                                </div>
+
+                                <div class="recommendation-resource">
+                                    ${item.resource_id}
+                                </div>
+
+                            </div>
+
+                            <span class="badge ${statusClass}">
+                                ${status.replaceAll("_", " ")}
+                            </span>
+
+                        </div>
+
+
+                        <div class="recommendation-grid">
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Service
+                                </small>
+
+                                <strong>
+                                    ${item.service}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Cost Anomaly
+                                </small>
+
+                                <strong>
+                                    ${item.anomaly_percentage}%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="recommendation-info">
+
+                                <small>
+                                    Estimated Saving
+                                </small>
+
+                                <strong>
+                                    $${saving.toFixed(2)} / month
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="recommendation-reason">
+
+                            <strong>
+                                AI Explanation
+                            </strong>
+
+                            <p>
+                                ${item.reason || "-"}
+                            </p>
+
+                            <p style="margin-top:7px;">
+                                <strong>
+                                    Recommendation:
+                                </strong>
+                                ${item.recommendation || "-"}
+                            </p>
+
+                        </div>
+
+
+                        ${
+                            status === "PENDING_APPROVAL"
+                            ?
+
+                            `
+
+                            <div class="recommendation-actions">
+
+                                <button
+                                    class="danger"
+                                    onclick="rejectRecommendation(${item.id})">
+                                    Reject
+                                </button>
+
+                                <button
+                                    class="success"
+                                    onclick="approveRecommendation(${item.id})">
+                                    ✓ Approve & Remediate
+                                </button>
+
+                            </div>
+
+                            `
+
+                            :
+
+                            ""
+
+                        }
+
+                    </div>
+
+                `;
+
+            });
+
+
+            container.innerHTML = html;
+
+
+            /* Calculate approved savings */
+
+            const approvedSavings =
+                recommendations
+                    .filter(
+                        item =>
+                            item.status === "APPROVED"
+                    )
+                    .reduce(
+                        (sum, item) =>
+                            sum +
+                            Number(
+                                item.estimated_monthly_saving || 0
+                            ),
+                        0
+                    );
+
+
+            document.getElementById(
+                "metricSavings"
+            ).textContent =
+                "$" +
+                approvedSavings.toFixed(2);
+
+
+        } catch (error) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    Unable to load recommendations.
+                </div>
+            `;
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       APPROVE
+    ========================================= */
+
+    async function approveRecommendation(id) {
+
+        const confirmed =
+            confirm(
+                "Approve this recommendation and execute the remediation action?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/api/recommendations/" +
+                    id +
+                    "/approve",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Approval failed"
+                );
+
+            }
+
+
+            showMessage(
+                "Recommendation approved successfully."
+            );
+
+
+            await loadDashboard();
+            await loadAuditLogs();
+
+        } catch (error) {
+
+            showMessage(
+                "Approval failed: " +
+                error.message,
+                true
+            );
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       REJECT
+    ========================================= */
+
+    async function rejectRecommendation(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to reject this recommendation?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/api/recommendations/" +
+                    id +
+                    "/reject",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Rejection failed"
+                );
+
+            }
+
+
+            showMessage(
+                "Recommendation rejected."
+            );
+
+
+            await loadDashboard();
+
+        } catch (error) {
+
+            showMessage(
+                "Rejection failed: " +
+                error.message,
+                true
+            );
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       RUN CLOUD SCAN
+    ========================================= */
+
+    async function runScan() {
+
+        const button =
+            event?.target;
+
+        if (button) {
+            button.disabled = true;
+            button.textContent =
+                "Scanning...";
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/api/scan",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Scan failed"
+                );
+
+            }
+
+
+            showMessage(
+                "Cloud scan completed. " +
+                data.recommendations_created +
+                " new recommendation(s) created."
+            );
+
+
+            await loadDashboard();
+
+
+        } catch (error) {
+
+            showMessage(
+                "Scan failed: " +
+                error.message,
+                true
+            );
+
+            console.error(error);
+
+        } finally {
+
+            if (button) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "↻ Run Cloud Scan";
+
+            }
+
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD AUDIT LOGS
+    ========================================= */
+
+    async function loadAuditLogs() {
+
+        const container =
+            document.getElementById(
+                "auditContainer"
+            );
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/api/audit-log"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load audit logs"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            const logs =
+                data.audit_logs || [];
+
+
+            if (logs.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty">
+                        No audit activity recorded yet.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            let html = "";
+
+
+            logs.forEach(log => {
+
+                html += `
+
+                    <div class="audit-item">
+
+                        <div class="audit-icon">
+                            ✓
+                        </div>
+
+                        <div class="audit-content">
+
+                            <strong>
+                                ${log.action || "ACTION"}
+                            </strong>
+
+                            <div class="audit-meta">
+
+                                <span>
+                                    Resource:
+                                    ${log.resource_id || "-"}
+                                </span>
+
+                                <span>
+                                    Approved by:
+                                    ${log.approved_by || "-"}
+                                </span>
+
+                                <span>
+                                    Before:
+                                    ${log.before_state || "-"}
+                                </span>
+
+                                <span>
+                                    After:
+                                    ${log.after_state || "-"}
+                                </span>
+
+                                <span>
+                                    ${log.timestamp || ""}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+
+            container.innerHTML = html;
+
+        } catch (error) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    Unable to load audit logs.
+                </div>
+            `;
+
+            console.error(error);
+        }
+
+    }
+
+
+    /* =========================================
+       LOAD EVERYTHING
+    ========================================= */
+
+    async function loadDashboard() {
+
+        const backend =
+            await checkBackend();
+
+        if (!backend) {
+            return;
+        }
+
+
+        await loadResources();
+
+        await loadOptimization();
+
+        await loadRecommendations();
+
+    }
+
+
+    /* =========================================
+       INITIAL LOAD
+    ========================================= */
+
+    window.addEventListener(
+        "DOMContentLoaded",
+        async () => {
+
+            await loadDashboard();
+
+            await loadAuditLogs();
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

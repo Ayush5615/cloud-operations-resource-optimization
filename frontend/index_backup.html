@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cloud Operations & Resource Optimization Platform</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fa;
+            color: #172033;
+        }
+
+        header {
+            background: #101827;
+            color: white;
+            padding: 28px 5%;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 8px 0 0;
+            color: #b9c7dc;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 28px auto;
+        }
+
+        .status {
+            background: white;
+            border: 1px solid #dce2ea;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+        }
+
+        .status span {
+            font-weight: bold;
+        }
+
+        .connected {
+            color: #16803c;
+        }
+
+        .disconnected {
+            color: #c62828;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: #1769aa;
+            color: white;
+        }
+
+        .secondary {
+            background: #e8edf4;
+            color: #172033;
+        }
+
+        .success {
+            background: #198754;
+            color: white;
+        }
+
+        .danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #dce2ea;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card-title {
+            color: #667085;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #dce2ea;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            font-size: 25px;
+        }
+
+        .resource {
+            border: 1px solid #dce2ea;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .label {
+            color: #667085;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            border-left: 6px solid #dc3545;
+            background: #fff5f5;
+            border-radius: 8px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .recommendation.medium {
+            border-left-color: #f0ad4e;
+            background: #fffaf0;
+        }
+
+        .recommendation.low {
+            border-left-color: #198754;
+            background: #f1fff7;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge-high {
+            background: #ffd9dd;
+            color: #b42318;
+        }
+
+        .badge-medium {
+            background: #ffe8bd;
+            color: #8a5700;
+        }
+
+        .badge-low {
+            background: #d7f5e5;
+            color: #137333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #e8edf4;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .recommendation h3 {
+            margin: 8px 0 15px;
+        }
+
+        .recommendation p {
+            line-height: 1.5;
+        }
+
+        .recommendation-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .saving {
+            color: #137333;
+            font-weight: bold;
+        }
+
+        .empty {
+            color: #667085;
+            padding: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 13px;
+            border-bottom: 1px solid #e2e6ec;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #475467;
+        }
+
+        .message {
+            display: none;
+            background: #e8f5e9;
+            border: 1px solid #b7dfba;
+            color: #216e39;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #fff1f2;
+            border-color: #fecdd3;
+            color: #b42318;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Cloud Operations & Resource Optimization Platform</h1>
+    <p>AWS infrastructure monitoring, anomaly detection and resource optimization dashboard</p>
+</header>
+
+<div class="container">
+
+    <div id="message" class="message"></div>
+
+    <div class="status">
+        Backend Status:
+        <span id="backendStatus">Checking...</span>
+    </div>
+
+    <div class="actions">
+        <button class="primary" onclick="runScan()">
+            Run Cloud Scan
+        </button>
+
+        <button class="secondary" onclick="loadDashboard()">
+            Refresh Dashboard
+        </button>
+
+        <button class="secondary" onclick="loadAuditLogs()">
+            Refresh Audit Log
+        </button>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">Resource Type</div>
+            <div class="card-value">EC2</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Total EC2 Resources</div>
+            <div class="card-value" id="totalResources">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Running Instances</div>
+            <div class="card-value" id="runningInstances">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Optimization Alerts</div>
+            <div class="card-value" id="optimizationAlerts">0</div>
+        </div>
+
+    </div>
+
+    <!-- RESOURCE INVENTORY -->
+
+    <div class="section">
+
+        <h2>EC2 Resource Inventory</h2>
+
+        <div id="resourcesContainer">
+            <div class="empty">
+                Loading resources...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+
+    <div class="section">
+
+        <h2>Optimization Recommendations</h2>
+
+        <div id="recommendationsContainer">
+            <div class="empty">
+                Loading recommendations...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SAVED RECOMMENDATIONS -->
+
+    <div class="section">
+
+        <h2>Approval & Remediation Center</h2>
+
+        <p>
+            Recommendations require human approval before remediation.
+        </p>
+
+        <div id="savedRecommendationsContainer">
+            <div class="empty">
+                Loading saved recommendations...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AUDIT LOG -->
+
+    <div class="section">
+
+        <h2>Audit Log</h2>
+
+        <div id="auditContainer">
+            <div class="empty">
+                Loading audit logs...
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const API = "http://127.0.0.1:8000";
+
+    // --------------------------------------------------
+    // MESSAGE
+    // --------------------------------------------------
+
+    function showMessage(text, error = false) {
+
+        const box = document.getElementById("message");
+
+        box.textContent = text;
+
+        box.className = error
+            ? "message error"
+            : "message";
+
+        box.style.display = "block";
+
+        setTimeout(() => {
+            box.style.display = "none";
+        }, 4000);
+    }
+
+
+    // --------------------------------------------------
+    // BACKEND STATUS
+    // --------------------------------------------------
+
+    async function checkBackend() {
+
+        const status = document.getElementById("backendStatus");
+
+        try {
+
+            const response = await fetch(API + "/");
+
+            if (!response.ok) {
+                throw new Error("Backend unavailable");
+            }
+
+            status.textContent = "Connected";
+            status.className = "connected";
+
+        } catch (error) {
+
+            status.textContent = "Disconnected";
+            status.className = "disconnected";
+        }
+    }
+
+
+    // --------------------------------------------------
+    // EC2 RESOURCES
+    // --------------------------------------------------
+
+    async function loadResources() {
+
+        const container =
+            document.getElementById("resourcesContainer");
+
+        try {
+
+            const response =
+                await fetch(API + "/api/resources/ec2");
+
+            const data = await response.json();
+
+            const resources = data.resources || [];
+
+            document.getElementById("totalResources").textContent =
+                resources.length;
+
+            const running =
+                resources.filter(
+                    item => item.state === "running"
+                ).length;
+
+            document.getElementById("runningInstances").textContent =
+                running;
+
+            if (resources.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No EC2 resources found.</div>';
+
+                return;
+            }
+
+            container.innerHTML = resources.map(resource => `
+
+                <div class="resource">
+
+                    <div class="resource-grid">
+
+                        <div>
+                            <span class="label">Instance ID:</span><br>
+                            ${resource.instance_id || "-"}
+                        </div>
+
+                        <div>
+                            <span class="label">Instance Type:</span><br>
+                            ${resource.instance_type || "-"}
+                        </div>
+
+                        <div>
+                            <span class="label">State:</span><br>
+                            ${resource.state || "-"}
+                        </div>
+
+                        <div>
+                            <span class="label">Availability Zone:</span><br>
+                            ${resource.availability_zone || "-"}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `).join("");
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load EC2 resources.</div>';
+
+            console.error(error);
+        }
+    }
+
+
+    // --------------------------------------------------
+    // OPTIMIZATION
+    // --------------------------------------------------
+
+    async function loadOptimization() {
+
+        const container =
+            document.getElementById("recommendationsContainer");
+
+        try {
+
+            const response =
+                await fetch(API + "/api/optimization/ec2");
+
+            const data = await response.json();
+
+            const recommendations =
+                data.recommendations || [];
+
+            document.getElementById("optimizationAlerts").textContent =
+                recommendations.length;
+
+            if (recommendations.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No optimization recommendations found.</div>';
+
+                return;
+            }
+
+            container.innerHTML =
+                recommendations.map(item => {
+
+                    const risk =
+                        (item.risk || "Low").toLowerCase();
+
+                    let riskClass = "low";
+
+                    if (risk === "high") {
+                        riskClass = "high";
+                    } else if (risk === "medium") {
+                        riskClass = "medium";
+                    }
+
+                    return `
+
+                        <div class="recommendation ${riskClass}">
+
+                            <span class="badge badge-${riskClass}">
+                                ${(item.risk || "Low").toUpperCase()}
+                            </span>
+
+                            <h3>
+                                ${item.instance_id || item.resource_id || "EC2 Resource"}
+                            </h3>
+
+                            <p>
+                                <strong>CPU Utilization:</strong>
+                                ${item.cpu_utilization ?? "-"}%
+                            </p>
+
+                            <p>
+                                <strong>Recommendation:</strong>
+                                ${item.recommendation || "-"}
+                            </p>
+
+                            <p>
+                                <strong>Reason:</strong>
+                                ${item.reason || "-"}
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }).join("");
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load optimization data.</div>';
+
+            console.error(error);
+        }
+    }
+
+
+    // --------------------------------------------------
+    // SAVED RECOMMENDATIONS
+    // --------------------------------------------------
+
+    async function loadRecommendations() {
+
+        const container =
+            document.getElementById("savedRecommendationsContainer");
+
+        try {
+
+            const response =
+                await fetch(API + "/api/recommendations");
+
+            const data = await response.json();
+
+            const recommendations =
+                data.recommendations || [];
+
+            if (recommendations.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No saved recommendations.</div>';
+
+                return;
+            }
+
+            container.innerHTML =
+                recommendations.map(item => `
+
+                    <div class="recommendation">
+
+                        <span class="status-badge">
+                            ${item.status}
+                        </span>
+
+                        <h3>
+                            Recommendation #${item.id}
+                        </h3>
+
+                        <p>
+                            <strong>Resource:</strong>
+                            ${item.resource_id}
+                        </p>
+
+                        <p>
+                            <strong>Service:</strong>
+                            ${item.service}
+                        </p>
+
+                        <p>
+                            <strong>Anomaly:</strong>
+                            ${item.anomaly_percentage}%
+                        </p>
+
+                        <p>
+                            <strong>Reason:</strong>
+                            ${item.reason}
+                        </p>
+
+                        <p>
+                            <strong>Recommendation:</strong>
+                            ${item.recommendation}
+                        </p>
+
+                        <p class="saving">
+                            Estimated Monthly Saving:
+                            $${item.estimated_monthly_saving}
+                        </p>
+
+                        <p>
+                            <strong>Risk:</strong>
+                            ${item.risk}
+                        </p>
+
+                        ${
+                            item.status === "PENDING_APPROVAL"
+                            ? `
+
+                                <div class="recommendation-actions">
+
+                                    <button
+                                        class="success"
+                                        onclick="approveRecommendation(${item.id})">
+                                        Approve & Remediate
+                                    </button>
+
+                                    <button
+                                        class="danger"
+                                        onclick="rejectRecommendation(${item.id})">
+                                        Reject
+                                    </button>
+
+                                </div>
+
+                            `
+                            : `
+                                <p>
+                                    <strong>Status:</strong>
+                                    ${item.status}
+                                </p>
+                            `
+                        }
+
+                    </div>
+
+                `).join("");
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load recommendations.</div>';
+
+            console.error(error);
+        }
+    }
+
+
+    // --------------------------------------------------
+    // RUN SCAN
+    // --------------------------------------------------
+
+    async function runScan() {
+
+        try {
+
+            showMessage("Running cloud resource scan...");
+
+            const response =
+                await fetch(API + "/api/scan", {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Scan failed"
+                );
+            }
+
+            showMessage(
+                `Scan completed. ${data.recommendations_created} recommendation(s) created.`
+            );
+
+            await loadDashboard();
+
+        } catch (error) {
+
+            showMessage(
+                "Scan failed: " + error.message,
+                true
+            );
+        }
+    }
+
+
+    // --------------------------------------------------
+    // APPROVE
+    // --------------------------------------------------
+
+    async function approveRecommendation(id) {
+
+        const confirmed =
+            confirm(
+                "Approve this recommendation and execute the remediation action?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            showMessage(
+                "Approving recommendation and executing remediation..."
+            );
+
+            const response =
+                await fetch(
+                    API + `/api/recommendations/${id}/approve`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Approval failed"
+                );
+            }
+
+            showMessage(
+                "Recommendation approved and remediation executed successfully."
+            );
+
+            await loadDashboard();
+            await loadAuditLogs();
+
+        } catch (error) {
+
+            showMessage(
+                "Approval failed: " + error.message,
+                true
+            );
+        }
+    }
+
+
+    // --------------------------------------------------
+    // REJECT
+    // --------------------------------------------------
+
+    async function rejectRecommendation(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to reject this recommendation?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    API + `/api/recommendations/${id}/reject`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Rejection failed"
+                );
+            }
+
+            showMessage(
+                "Recommendation rejected successfully."
+            );
+
+            await loadRecommendations();
+
+        } catch (error) {
+
+            showMessage(
+                "Rejection failed: " + error.message,
+                true
+            );
+        }
+    }
+
+
+    // --------------------------------------------------
+    // AUDIT LOG
+    // --------------------------------------------------
+
+    async function loadAuditLogs() {
+
+        const container =
+            document.getElementById("auditContainer");
+
+        try {
+
+            const response =
+                await fetch(API + "/api/audit-log");
+
+            const data = await response.json();
+
+            const logs =
+                data.audit_logs || [];
+
+            if (logs.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No audit logs available.</div>';
+
+                return;
+            }
+
+            container.innerHTML = `
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Action</th>
+                            <th>Resource</th>
+                            <th>Approved By</th>
+                            <th>Before State</th>
+                            <th>After State</th>
+                            <th>Timestamp</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${logs.map(log => `
+
+                            <tr>
+
+                                <td>${log.id}</td>
+
+                                <td>
+                                    <strong>
+                                        ${log.action}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${log.resource_id}
+                                </td>
+
+                                <td>
+                                    ${log.approved_by}
+                                </td>
+
+                                <td>
+                                    ${log.before_state}
+                                </td>
+
+                                <td>
+                                    ${log.after_state}
+                                </td>
+
+                                <td>
+                                    ${log.timestamp}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            `;
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<div class="empty">Unable to load audit logs.</div>';
+
+            console.error(error);
+        }
+    }
+
+
+    // --------------------------------------------------
+    // LOAD EVERYTHING
+    // --------------------------------------------------
+
+    async function loadDashboard() {
+
+        await checkBackend();
+
+        await loadResources();
+
+        await loadOptimization();
+
+        await loadRecommendations();
+
+        await loadAuditLogs();
+    }
+
+
+    // --------------------------------------------------
+    // START
+    // --------------------------------------------------
+
+    loadDashboard();
+
+</script>
+
+</body>
+</html>

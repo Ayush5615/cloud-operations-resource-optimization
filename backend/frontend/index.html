@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Operations & Resource Optimization</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 22px 40px;
+        }
+
+        .header h1 {
+            margin: 0 0 6px;
+            font-size: 25px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .status {
+            background: white;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 22px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .status span {
+            font-weight: bold;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .resource {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .resource-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            padding: 7px 0;
+        }
+
+        .label {
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            border-left: 5px solid #dc2626;
+            background: #fef2f2;
+            padding: 18px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .recommendation.medium {
+            border-left-color: #d97706;
+            background: #fffbeb;
+        }
+
+        .recommendation.low {
+            border-left-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .priority {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .medium .priority {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .low .priority {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .loading {
+            color: #6b7280;
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fef2f2;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 800px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Cloud Operations & Resource Optimization Platform</h1>
+        <p>AWS infrastructure monitoring and optimization dashboard</p>
+    </div>
+
+    <div class="container">
+
+        <div class="status">
+            Backend Status:
+            <span id="backendStatus">Checking...</span>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>AWS Resource Type</h3>
+                <div class="value" id="resourceType">-</div>
+            </div>
+
+            <div class="card">
+                <h3>Total EC2 Resources</h3>
+                <div class="value" id="resourceCount">-</div>
+            </div>
+
+            <div class="card">
+                <h3>Running Instances</h3>
+                <div class="value" id="runningCount">-</div>
+            </div>
+
+            <div class="card">
+                <h3>Optimization Alerts</h3>
+                <div class="value" id="alertCount">-</div>
+            </div>
+
+        </div>
+
+        <div class="section">
+            <h2>EC2 Resource Inventory</h2>
+
+            <div id="resources">
+                <p class="loading">Loading AWS resources...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Optimization Recommendations</h2>
+
+            <div id="recommendations">
+                <p class="loading">Analyzing resources...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        const API_BASE = "http://127.0.0.1:8000";
+
+        async function loadDashboard() {
+
+            try {
+
+                const resourceResponse = await fetch(
+                    API_BASE + "/api/resources/ec2"
+                );
+
+                if (!resourceResponse.ok) {
+                    throw new Error("Resource API returned an error");
+                }
+
+                const resourceData = await resourceResponse.json();
+
+                const resources = resourceData.resources || [];
+
+                document.getElementById("backendStatus").textContent =
+                    "Connected";
+
+                document.getElementById("resourceType").textContent =
+                    resourceData.resource_type || "EC2";
+
+                document.getElementById("resourceCount").textContent =
+                    resources.length;
+
+                const runningResources = resources.filter(
+                    resource => resource.state === "running"
+                );
+
+                document.getElementById("runningCount").textContent =
+                    runningResources.length;
+
+                const resourcesContainer =
+                    document.getElementById("resources");
+
+                if (resources.length === 0) {
+
+                    resourcesContainer.innerHTML =
+                        "<p>No EC2 resources found.</p>";
+
+                } else {
+
+                    resourcesContainer.innerHTML = resources.map(
+                        resource => `
+
+                            <div class="resource">
+
+                                <div class="resource-row">
+                                    <div class="label">Instance ID</div>
+                                    <div>${resource.instance_id}</div>
+                                </div>
+
+                                <div class="resource-row">
+                                    <div class="label">Instance Type</div>
+                                    <div>${resource.instance_type}</div>
+                                </div>
+
+                                <div class="resource-row">
+                                    <div class="label">State</div>
+                                    <div>${resource.state}</div>
+                                </div>
+
+                                <div class="resource-row">
+                                    <div class="label">Availability Zone</div>
+                                    <div>${resource.availability_zone}</div>
+                                </div>
+
+                            </div>
+                        `
+                    ).join("");
+                }
+
+
+                const optimizationResponse = await fetch(
+                    API_BASE + "/api/optimization/ec2"
+                );
+
+                if (!optimizationResponse.ok) {
+                    throw new Error("Optimization API returned an error");
+                }
+
+                const optimizationData =
+                    await optimizationResponse.json();
+
+                const recommendations =
+                    optimizationData.recommendations || [];
+
+                document.getElementById("alertCount").textContent =
+                    recommendations.length;
+
+                const recommendationContainer =
+                    document.getElementById("recommendations");
+
+                if (recommendations.length === 0) {
+
+                    recommendationContainer.innerHTML =
+                        "<p>No optimization recommendations found.</p>";
+
+                } else {
+
+                    recommendationContainer.innerHTML =
+                        recommendations.map(item => {
+
+                            const priority =
+                                (item.priority || "Low").toLowerCase();
+
+                            return `
+
+                                <div class="recommendation ${priority}">
+
+                                    <div class="priority">
+                                        ${item.priority}
+                                    </div>
+
+                                    <h3>
+                                        ${item.instance_id}
+                                    </h3>
+
+                                    <p>
+                                        <strong>CPU Utilization:</strong>
+                                        ${item.cpu_utilization}%
+                                    </p>
+
+                                    <p>
+                                        <strong>Recommendation:</strong>
+                                        ${item.recommendation}
+                                    </p>
+
+                                    <p>
+                                        <strong>Reason:</strong>
+                                        ${item.reason}
+                                    </p>
+
+                                </div>
+
+                            `;
+
+                        }).join("");
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById("backendStatus").textContent =
+                    "Connection Failed";
+
+                document.getElementById("resources").innerHTML =
+                    `<div class="error">
+                        Unable to load AWS resources.
+                        Make sure the FastAPI backend is running.
+                    </div>`;
+
+                document.getElementById("recommendations").innerHTML =
+                    `<div class="error">
+                        Unable to load optimization recommendations.
+                    </div>`;
+            }
+        }
+
+        loadDashboard();
+
+    </script>
+
+</body>
+</html>
