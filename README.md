@@ -96,87 +96,63 @@ The goal is not to automate every decision blindly. The platform keeps a human a
 
 ```text
 
-&#x20;                   AWS
+&#x20;                  AWS EC2
 
-&#x20;                    |
+&#x20;  |
 
-&#x20;             +------+------+
+&#x20;  v
 
-&#x20;             |             |
+Resource Monitoring
 
-&#x20;            EC2        CloudWatch
+&#x20;  |
 
-&#x20;             |             |
+&#x20;  v
 
-&#x20;             +------+------+
+Cost / CPU Analysis
 
-&#x20;                    |
+&#x20;  |
 
-&#x20;               AWS Service
+&#x20;  v
 
-&#x20;                    |
+Anomaly Detection
 
-&#x20;                    v
+&#x20;  |
 
-&#x20;            Resource Analysis
+&#x20;  v
 
-&#x20;                    |
+AI-Assisted Explanation
 
-&#x20;         +----------+----------+
+&#x20;  |
 
-&#x20;         |                     |
+&#x20;  v
 
-&#x20;         v                     v
+Optimization Recommendation
 
-&#x20;   Cost Anomaly            CPU Analysis
+&#x20;  |
 
-&#x20;     Detection                 |
+&#x20;  v
 
-&#x20;         |                     |
+Human Approval
 
-&#x20;         +----------+----------+
+&#x20;  |
 
-&#x20;                    |
+&#x20;  +----------+
 
-&#x20;                    v
+&#x20;  |          |
 
-&#x20;             AI Explanation
+&#x20;  v          v
 
-&#x20;                    |
+Rejected   Approved
 
-&#x20;                    v
+&#x20;             |
 
-&#x20;         Optimization Engine
+&#x20;             v
 
-&#x20;                    |
+&#x20;        Remediation
 
-&#x20;                    v
+&#x20;             |
 
-&#x20;            Recommendation
+&#x20;             v
 
-&#x20;                    |
-
-&#x20;             Human Approval
-
-&#x20;              /          \\
-
-&#x20;             /            \\
-
-&#x20;         Reject          Approve
-
-&#x20;           |                |
-
-&#x20;           v                v
-
-&#x20;       REJECTED         Remediation
-
-&#x20;           |                |
-
-&#x20;           +-------+--------+
-
-&#x20;                   |
-
-&#x20;                   v
-
-&#x20;               Audit Log
+&#x20;         Audit Log
 
