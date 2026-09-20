@@ -568,7 +568,6 @@ def reject_recommendation(
     audit = save_audit_log(
         action="REJECT",
         resource_id=recommendation.resource_id,
-        recommendation_id=recommendation.id,
         approved_by="admin",
         before_state=before_state,
         after_state="REJECTED"
