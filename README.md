@@ -20,35 +20,35 @@ This project provides an operational workflow:
 
 AWS Resources
 
-&#x20;   ↓
+    ↓
 
 Resource Monitoring
 
-&#x20;   ↓
+    ↓
 
 Cost / Usage Analysis
 
-&#x20;   ↓
+    ↓
 
 Anomaly Detection
 
-&#x20;   ↓
+    ↓
 
 AI-Assisted Explanation
 
-&#x20;   ↓
+    ↓
 
 Optimization Recommendation
 
-&#x20;   ↓
+    ↓
 
 Human Approval
 
-&#x20;   ↓
+    ↓
 
 Remediation
 
-&#x20;   ↓
+    ↓
 
 Audit Log
 
@@ -100,61 +100,63 @@ AWS EC2
 
 
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Resource Monitoring
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Cost / CPU Analysis
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Anomaly Detection
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 AI-Assisted Explanation
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Optimization Recommendation
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Human Approval
 
-&#x20;  |
+   |
 
-&#x20;  +----------+
+   +----------+
 
-&#x20;  |          |
+   |          |
 
-&#x20;  v          v
+   v          v
 
 Rejected   Approved
 
-&#x20;             |
+              |
 
-&#x20;             v
+              v
 
-&#x20;        Remediation
+         Remediation
 
-&#x20;             |
+              |
 
-&#x20;             v
+              v
 
-&#x20;         Audit Log
+          Audit Log
+
+
 
